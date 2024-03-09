@@ -50,7 +50,7 @@ def completar_cuadrados(tablero, fila, columna, jugador, completados):
                 puntajes[jugador] += 1
                 print('comp arriba')
                 completado = True
-            elif tablero[fila + 1][columna - 1] != "0" and tablero[fila + 1][columna + 1] != "0" and tablero[fila + 2][columna] != "0":
+            if tablero[fila + 1][columna - 1] != "0" and tablero[fila + 1][columna + 1] != "0" and tablero[fila + 2][columna] != "0":
                 completados[(fila + 1, columna)] = jugador
                 puntajes[jugador] += 1
                 print('comp abajo')
@@ -74,7 +74,7 @@ def completar_cuadrados(tablero, fila, columna, jugador, completados):
                 puntajes[jugador] += 1
                 print('compizq')
                 completado = True
-            elif tablero[fila - 1][columna + 1] != "0" and tablero[fila + 1][columna + 1] != "0" and tablero[fila][columna + 2] != "0":
+            if tablero[fila - 1][columna + 1] != "0" and tablero[fila + 1][columna + 1] != "0" and tablero[fila][columna + 2] != "0":
                 completados[(fila, columna + 1)] = jugador
                 puntajes[jugador] += 1
                 print('compder')
@@ -105,23 +105,32 @@ puntaje_anterior = 0
 # Continuar hasta que todas las posiciones estén ocupadas
 while not todas_posiciones_ocupadas(tablero):
     # Solicitar al usuario que ingrese la fila y la columna
-    fila = int(input("\nIngrese la fila (0-6): "))
-    columna = int(input("Ingrese la columna (0-6): "))
+    fila_input = input("\nIngrese la fila (0-6): ")
+    columna_input = input("Ingrese la columna (0-6): ")
 
-    # Verificar si la posición seleccionada es válida y dibujar la línea
-    if fila >= 0 and fila < 7 and columna >= 0 and columna < 7 and tablero[fila][columna] == "0":
-        dibujar_linea(tablero, fila, columna, jugador_actual, completados)
-        # Verificar si el jugador actual completó un cuadrado para darle un turno adicional
-        if puntajes[jugador_actual] > puntaje_anterior:
-            print("¡El jugador", jugador_actual, "ha completado un cuadrado y tiene un turno adicional!")
-        else:
-            jugador_actual = jugadores[(jugadores.index(jugador_actual) + 1) % len(jugadores)]
-        # Actualizar puntaje_anterior después de cada turno
-        puntaje_anterior = puntajes[jugador_actual]
-        dibujar_tablero(tablero, completados, puntajes)
+    # Verificar si los inputs no son nulos y son del tipo int
+    if fila_input.strip() and columna_input.strip():
+        try:
+            fila = int(fila_input)
+            columna = int(columna_input)
+
+            # Verificar si la posición seleccionada es válida y dibujar la línea
+            if 0 <= fila < 7 and 0 <= columna < 7 and tablero[fila][columna] == "0":
+                dibujar_linea(tablero, fila, columna, jugador_actual, completados)
+                # Verificar si el jugador actual completó un cuadrado para darle un turno adicional
+                if puntajes[jugador_actual] > puntaje_anterior:
+                    print("¡El jugador", jugador_actual, "ha completado un cuadrado y tiene un turno adicional!")
+                else:
+                    jugador_actual = jugadores[(jugadores.index(jugador_actual) + 1) % len(jugadores)]
+                # Actualizar puntaje_anterior después de cada turno
+                puntaje_anterior = puntajes[jugador_actual]
+                dibujar_tablero(tablero, completados, puntajes)
+            else:
+                print("Posición inválida o ya ocupada.")
+        except ValueError:
+            print("Por favor, ingrese valores enteros válidos.")
     else:
-        print("Posición inválida o ya ocupada.")
-    
+        print("Por favor, ingrese valores no nulos.")
 ganador = max(puntajes, key=puntajes.get)
 print("¡Todas las posiciones han sido ocupadas!")
 print("El ganador es:", ganador)
